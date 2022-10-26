@@ -9,7 +9,7 @@ Setup:
 2. Connect the CAN transceiver to the CAN bus to be listened to.
 3. Build and flash the code.
 4. Connect the STM32 to your computer using a micro USB cable and open a serial 
-   monitor (PuTTy, `screen`, etc) at 115200 baud.
+   monitor (PuTTY, `screen`, `minicom`, etc) at 115200 baud.
 5. Reset the STM32.
 
 Info about received messages is sent to UART3 and looks like:
