@@ -73,7 +73,7 @@ void canl_tick(canl_handle_t* canl_h);
  * @param[in]   canl_h      CANL handle
  * @param[in]   rx_fifo     Receive fifo number
  */
-inline void canl_rx_it_handler(canl_handle_t* canl_h, uint32_t rx_fifo)
+static inline void canl_rx_it_handler(canl_handle_t* canl_h, uint32_t rx_fifo)
 {
     UNUSED(rx_fifo); // could be useful in future?
     canl_h->it_flag = true;
