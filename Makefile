@@ -90,6 +90,10 @@ src/Core/Src/main.c \
 src/Core/Src/stm32f7xx_it.c \
 src/Core/Src/stm32f7xx_hal_msp.c \
 src/Core/Src/system_stm32f7xx.c \
+src/Core/Src/gpio.c \
+src/Core/Src/can.c \
+src/Core/Src/usart.c \
+src/Core/Src/usb_otg.c \
 src/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_adc.c \
 src/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_adc_ex.c \
 src/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c \
