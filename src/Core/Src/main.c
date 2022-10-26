@@ -61,10 +61,10 @@ void SystemClock_Config(void);
 /**
  * @brief   Redirect character output for printf
  */
-int __io_putchar(int ch)
+int _write(int fd, char * ptr, int len)
 {
-    HAL_UART_Transmit(&huart3, (uint8_t*) &ch, 1, HAL_MAX_DELAY);
-    return ch;
+  HAL_UART_Transmit(&huart3, (uint8_t*) ptr, len, HAL_MAX_DELAY);
+  return len;
 }
 
 /* USER CODE END 0 */
@@ -104,7 +104,8 @@ int main(void)
 
   canl_init(&can_listener, &hcan1);
   
-  printf("Initialised.\nListening for CAN messages...\n\n");
+  printf("Initialised.\r\n");
+  printf("Listening for CAN messages...\r\n\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
