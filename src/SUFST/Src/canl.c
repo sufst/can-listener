@@ -80,9 +80,9 @@ void canl_tick(canl_handle_t* canl_h)
 
                 if (no_errors(canl_h))
                 {
-                    printf("Time:    %u\n", canl_h->rx_message.header.Timestamp);
-                    printf("ID:      %u\n", canl_h->rx_message.header.StdId);
-                    printf("Length:  %u\n", canl_h->rx_message.header.DLC);
+                    printf("Time:    %lu\n", canl_h->rx_message.header.Timestamp);
+                    printf("ID:      %lx\n", canl_h->rx_message.header.StdId);
+                    printf("Length:  %lu\n", canl_h->rx_message.header.DLC);
                     printf("Data:    ");
                     
                     for (uint32_t i = 0; i < canl_h->rx_message.header.DLC; i++)
@@ -90,7 +90,7 @@ void canl_tick(canl_handle_t* canl_h)
                         printf("%02x", canl_h->rx_message.data[i]);
                     }
 
-                    printf("\n");
+                    printf("\n\n");
                 }
             }
         }
@@ -99,7 +99,7 @@ void canl_tick(canl_handle_t* canl_h)
     // notify user of error and stop
     if (!no_errors(canl_h))
     {
-        printf("Error (%08x)\nStopping.\n", canl_h->err);
+        printf("Error (%08lx)\nStopping.\n", canl_h->err);
         while(1);
     }
 }
