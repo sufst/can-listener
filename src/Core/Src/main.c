@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "canl.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,6 +103,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   canl_init(&can_listener, &hcan1);
+  
+  printf("Initialised.\nListening for CAN messages...\n\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
