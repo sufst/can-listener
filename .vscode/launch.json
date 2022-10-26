@@ -1,0 +1,22 @@
+{
+    "configurations": [
+      {
+        "cwd": "${workspaceFolder}",
+        "name": "debug (stutil)",
+        "executable": "build/can-listener.elf",
+        "request": "launch",
+        "type": "cortex-debug",
+        "showDevDebugOutput": "none",
+        "servertype": "stutil",
+        // "svdFile": "debug/STM32F7x6.svd",
+        "osx": {
+          "name": "debug (stutil)",
+          "executable": "build/can-listener.elf",
+          "request": "launch",
+          "type": "cortex-debug",
+          "armToolchainPath": "/Applications/ARM/bin",
+          "serverpath": "st-util"
+        },
+      }
+    ]
+}
