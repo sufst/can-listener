@@ -56,5 +56,6 @@ typedef struct {
 
 void canl_init(canl_handle_t* canl_h, CAN_HandleTypeDef* can_h);
 void canl_tick(canl_handle_t* canl_h);
+inline void canl_rx_it_handler(canl_handle_t* canl_h, uint32_t rx_fifo);
 
 #endif

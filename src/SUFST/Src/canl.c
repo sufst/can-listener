@@ -64,7 +64,7 @@ void canl_tick(canl_handle_t* canl_h)
     while (!canl_h->it_flag)
         ;
 
-    // unpack message and print it
+    // get any pending messages and print them
     if (no_errors(canl_h))
     {
         for (uint32_t fifo = 0; fifo < num_rx_fifos; fifo++)
@@ -102,6 +102,26 @@ void canl_tick(canl_handle_t* canl_h)
         printf("Error (%08lx)\nStopping.\n", canl_h->err);
         while(1);
     }
+}
+
+/**
+ * @brief       Receive interrupt handler
+ * 
+ * @details     This needs to be called in:
+ *              - HAL_CAN_RxFifo0MsgPendingCallback
+ *              - HAL_CAN_RxFifo1MsgPendingCallback
+ * 
+ *              *If* the callback is passed the same CAN handle as that of the 
+ *              CANL instance
+ * 
+ * @param[in]   canl_h      CANL handle
+ * @param[in]   rx_fifo     Receive fifo number
+ */
+inline void canl_rx_it_handler(canl_handle_t* canl_h, uint32_t rx_fifo)
+{
+    UNUSED(rx_fifo); // could be useful in future?
+    
+    canl_h->it_flag = true;
 }
 
 //==============================================================================
