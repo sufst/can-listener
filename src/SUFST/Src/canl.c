@@ -104,26 +104,6 @@ void canl_tick(canl_handle_t* canl_h)
     }
 }
 
-/**
- * @brief       Receive interrupt handler
- * 
- * @details     This needs to be called in:
- *              - HAL_CAN_RxFifo0MsgPendingCallback
- *              - HAL_CAN_RxFifo1MsgPendingCallback
- * 
- *              *If* the callback is passed the same CAN handle as that of the 
- *              CANL instance
- * 
- * @param[in]   canl_h      CANL handle
- * @param[in]   rx_fifo     Receive fifo number
- */
-inline void canl_rx_it_handler(canl_handle_t* canl_h, uint32_t rx_fifo)
-{
-    UNUSED(rx_fifo); // could be useful in future?
-    
-    canl_h->it_flag = true;
-}
-
 //==============================================================================
 
 /**
