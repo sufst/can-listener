@@ -27,50 +27,42 @@ static void add_error(canl_handle_t* canl_h, uint32_t err);
 void canl_init(canl_handle_t* canl_h, CAN_HandleTypeDef* can_h)
 {
     canl_h->can_h = can_h;
-    canl_h->it_flag = false;
+
+    HAL_StatusTypeDef status = HAL_CAN_Start(canl_h->can_h);
+    ADD_ERROR_IF(status != HAL_OK, CANL_ERROR_HAL, canl_h);
+
+    if (no_errors(canl_h))
+    {
+        const uint32_t notifs = CAN_IT_RX_FIFO0_MSG_PENDING
+                                | CAN_IT_RX_FIFO1_MSG_PENDING;
+        status = HAL_CAN_ActivateNotification(canl_h->can_h, notifs);
+        ADD_ERROR_IF(status != HAL_OK, CANL_ERROR_HAL, canl_h);
+    }
 }
 
 /**
- * @brief       CANL loop task
+ * @brief       Receive interrupt handler
  * 
- * @details     Call this repeatedly in main() to run the listener
+ * @details     This needs to be called in:
+ *              - HAL_CAN_RxFifo0MsgPendingCallback
+ *              - HAL_CAN_RxFifo1MsgPendingCallback
  * 
- *              This will busy wait until a message is received, so don't try
- *              and run any other tasks
+ *              ... only if the callback is passed the same CAN handle as that
+ *              of the CANL instance
  * 
-* @param[in]   canl_h  CANL handle
+ * @param[in]   canl_h      CANL handle
+ * @param[in]   rx_fifo     Receive fifo number
  */
-void canl_tick(canl_handle_t* canl_h)
+void canl_rx_it_handler(canl_handle_t* canl_h, uint32_t rx_fifo)
 {
-    HAL_StatusTypeDef status;
-
-    // enable CAN interrupt notifications
-    static uint32_t notifs [] = {
-        CAN_IT_RX_FIFO0_MSG_PENDING, CAN_IT_RX_FIFO1_MSG_PENDING
-    };
-
-    static const uint32_t num_rx_fifos = sizeof(notifs) / sizeof(notifs[0]);
-
-    for (uint32_t i = 0; i < num_rx_fifos; i++)
-    {
-        if (no_errors(canl_h))
-        {
-            status = HAL_CAN_ActivateNotification(canl_h->can_h, notifs[i]);
-            ADD_ERROR_IF(status != HAL_OK, CANL_ERROR_HAL, canl_h);
-        }
-    }
-    
-    // wait for an interrupt
-    while (!canl_h->it_flag)
-        ;
-
     // get any pending messages and print them
     if (no_errors(canl_h))
     {
-        for (uint32_t fifo = 0; fifo < num_rx_fifos; fifo++)
+        for (uint32_t fifo = 0; fifo < 2; fifo++)
         {
             while(HAL_CAN_GetRxFifoFillLevel(canl_h->can_h, fifo) > 0)
             {
+                HAL_StatusTypeDef status;
                 status = HAL_CAN_GetRxMessage(canl_h->can_h, 
                                               fifo,
                                               &canl_h->rx_message.header,

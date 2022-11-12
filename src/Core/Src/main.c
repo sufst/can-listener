@@ -112,7 +112,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    canl_tick(&can_listener);
+    // do nothing! wait for interrupt
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
