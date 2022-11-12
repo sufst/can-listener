@@ -15,10 +15,10 @@ Setup:
 Info about received messages is sent to UART3 and looks like:
 
 ```text
-Time:    0
-ID:      1af
-Length:  2
-Data:    f300
+Tick:    75030
+ID:      100
+Length:  8
+Data:    ff03000000000000
 ```
 
 Make sure that:
