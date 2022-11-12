@@ -73,9 +73,9 @@ void canl_rx_it_handler(canl_handle_t* canl_h, uint32_t rx_fifo)
                 if (no_errors(canl_h))
                 {
                     printf("Tick:    %lu\r\n", HAL_GetTick());
-                    printf("ID:      %lx\r\n", canl_h->rx_message.header.StdId);
+                    printf("ID:      0x%lx\r\n", canl_h->rx_message.header.StdId);
                     printf("Length:  %lu\r\n", canl_h->rx_message.header.DLC);
-                    printf("Data:    ");
+                    printf("Data:    0x");
                     
                     for (uint32_t i = 0; i < canl_h->rx_message.header.DLC; i++)
                     {

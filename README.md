@@ -16,9 +16,9 @@ Info about received messages is sent to UART3 and looks like:
 
 ```text
 Tick:    75030
-ID:      100
+ID:      0x100
 Length:  8
-Data:    ff03000000000000
+Data:    0xff03000000000000
 ```
 
 Make sure that:
