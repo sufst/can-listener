@@ -1,11 +1,11 @@
 /******************************************************************************
  * @file   canl.h
- * @author Tim Brewis (@t-bre, tab1g19@soton.ac.uk)
- * @brief  CAN listener (CANL)
+ * @author Tim Brewis (@t-bre)
+ * @brief  CAN listener
  ******************************************************************************/
 
-#ifndef CANL_H
-#define CANL_H
+#ifndef _CAN_LISTENER_H
+#define _CAN_LISTENER_H
 
 #include "can.h"
 #include <stdbool.h>
@@ -48,4 +48,6 @@ typedef struct {
 void canl_init(canl_handle_t* canl_h, CAN_HandleTypeDef* can_h);
 void canl_tick(canl_handle_t* canl_h);
 void canl_rx_it_handler(canl_handle_t* canl_h, uint32_t rx_fifo);
+
+
 #endif

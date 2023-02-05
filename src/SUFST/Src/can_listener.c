@@ -1,12 +1,13 @@
 /******************************************************************************
  * @file   canl.c
- * @author Tim Brewis (@t-bre, tab1g19@soton.ac.uk)
+ * @author Tim Brewis (@t-bre)
+ * @brief  CAN listener
  ******************************************************************************/
 
-#include "canl.h"
+#include "can_listener.h"
 
-#include "can.h"
 #include <stdio.h>
+#include <stdbool.h>
 
 #define ADD_ERROR_IF(cond, err, inst) if(cond) { add_error(inst, err); }
 

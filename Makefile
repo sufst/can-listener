@@ -87,7 +87,7 @@ LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) \
 ###############################################################################
 
 C_SOURCES =  \
-src/SUFST/Src/canl.c \
+src/SUFST/Src/can_listener.c \
 src/Core/Src/main.c \
 src/Core/Src/stm32f7xx_it.c \
 src/Core/Src/stm32f7xx_hal_msp.c \
