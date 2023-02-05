@@ -8,7 +8,7 @@
         "type": "cortex-debug",
         "showDevDebugOutput": "none",
         "servertype": "stutil",
-        // "svdFile": "debug/STM32F7x6.svd",
+        "svdFile": "debug/STM32F7x6.svd",
         "osx": {
           "name": "debug (stutil)",
           "executable": "build/can-test-rig.elf",
