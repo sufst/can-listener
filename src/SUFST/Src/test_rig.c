@@ -1,14 +1,12 @@
 /******************************************************************************
- * @file    config.h
+ * @file    test_rig.c
  * @author  Tim Brewis (@t-bre)
- * @brief   Configuration header
  *****************************************************************************/
 
-#ifndef _CONFIG_H
-#define _CONFIG_H
+#include "test_rig.h"
 
-// test rigs
-#define CONFIG_ENABLE_CAN_LISTENER  1
-
-
-#endif
+void test_rig_init(test_rig_context_t* test_rig_ptr, 
+                   TX_BYTE_POOL* app_mem_pool)
+{
+    __ASM("NOP");
+}

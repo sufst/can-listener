@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "test_rig.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,7 +43,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+test_rig_context_t test_rig;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -62,11 +62,10 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
   TX_BYTE_POOL *byte_pool = (TX_BYTE_POOL*)memory_ptr;
 
   /* USER CODE BEGIN App_ThreadX_MEM_POOL */
-  (void)byte_pool;
   /* USER CODE END App_ThreadX_MEM_POOL */
 
   /* USER CODE BEGIN App_ThreadX_Init */
-
+  test_rig_init(&test_rig, byte_pool);
   /* USER CODE END App_ThreadX_Init */
 
   return ret;

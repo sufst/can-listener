@@ -103,10 +103,6 @@ int main(void)
   MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
 
-  canl_init(&can_listener, &hcan1);
-  
-  printf("Initialised.\r\n");
-  printf("Listening for CAN messages...\r\n\n");
   /* USER CODE END 2 */
 
   MX_ThreadX_Init();
