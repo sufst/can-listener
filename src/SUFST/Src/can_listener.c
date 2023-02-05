@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define CANL_THREAD_STACK_SIZE  512
+#define CANL_THREAD_STACK_SIZE  1024
 
 #define ADD_ERROR_IF(cond, err, inst) if(cond) { add_error(inst, err); }
 
@@ -114,7 +114,7 @@ static void print_msg(canl_handle_t* canl_h, rtcan_msg_t* msg_ptr)
 {
     (void) canl_h; // TODO: print bus name
 
-    printf("Tick:    %lu\r\n", HAL_GetTick());
+    printf("Tick:    %lu\r\n", tx_time_get());
     printf("ID:      0x%lx\r\n", msg_ptr->identifier);
     printf("Length:  %lu\r\n", msg_ptr->length);
     printf("Data:    0x");

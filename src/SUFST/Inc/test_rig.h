@@ -7,6 +7,8 @@
 #ifndef _TEST_RIG_H
 #define _TEST_RIG_H
 
+#include <stdint.h>
+
 #include "tx_api.h"
 #include "can.h"
 #include "rtcan.h"
