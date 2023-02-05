@@ -158,3 +158,5 @@ src/Drivers/CMSIS/Include/*
 !src/Drivers/CMSIS/Include/mpu_armv7.h
 
 !src/Drivers/CMSIS/LICENSE.txt
+
+src/Middlewares/ST/threadx/ports/cortex_m7/iar

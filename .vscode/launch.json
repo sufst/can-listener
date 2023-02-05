@@ -11,7 +11,7 @@
         // "svdFile": "debug/STM32F7x6.svd",
         "osx": {
           "name": "debug (stutil)",
-          "executable": "build/can-listener.elf",
+          "executable": "build/can-test-rig.elf",
           "request": "launch",
           "type": "cortex-debug",
           "armToolchainPath": "/Applications/ARM/bin",
