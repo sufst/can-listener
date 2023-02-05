@@ -41,4 +41,11 @@ void test_rig_init(test_rig_context_t* test_rig_ptr,
                    CAN_HandleTypeDef* can_s_h,
                    TX_BYTE_POOL* app_mem_pool);
 
+void test_rig_handle_can_tx_mailbox_callback(test_rig_context_t* test_rig_ptr,
+                                             CAN_HandleTypeDef* can_h);
+
+void test_rig_handle_can_rx_it(test_rig_context_t* test_rig_ptr,
+                               CAN_HandleTypeDef* can_h,
+                               uint32_t rx_fifo);
+
 #endif
