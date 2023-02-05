@@ -155,5 +155,6 @@ src/Drivers/CMSIS/Include/*
 !src/Drivers/CMSIS/Include/cmsis_version.h
 !src/Drivers/CMSIS/Include/cmsis_gcc.h
 !src/Drivers/CMSIS/Include/cmsis_compiler.h
+!src/Drivers/CMSIS/Include/mpu_armv7.h
 
 !src/Drivers/CMSIS/LICENSE.txt
