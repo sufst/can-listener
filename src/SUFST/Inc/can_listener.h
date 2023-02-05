@@ -49,6 +49,11 @@ typedef struct {
      */
     const char* bus_name;
 
+    /**
+     * @brief   Mutex for printing
+     */
+    TX_MUTEX* printf_mutex_ptr;
+
 } canl_handle_t;
 
 //==============================================================================
@@ -58,6 +63,7 @@ void canl_init(canl_handle_t* canl_h,
                const char* bus_name,
                const uint32_t* can_ids,
                const uint32_t num_can_ids,
-               TX_BYTE_POOL* app_mem_pool);
+               TX_BYTE_POOL* app_mem_pool,
+               TX_MUTEX* printf_mutex_ptr);
 
 #endif

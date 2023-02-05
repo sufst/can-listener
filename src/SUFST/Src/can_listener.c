@@ -21,22 +21,25 @@ static void print_msg(canl_handle_t* canl_h, rtcan_msg_t* msg_ptr);
 /**
  * @brief       Initialises CANL instance
  * 
- * @param[in]   canl_h          CANL handle
- * @param[in]   rtcan_h         RTCAN handle to listen to
- * @param[in]   bus_name        Name of CAN bus
- * @param[in]   can_ids         Array of CAN IDs to listen to
- * @param[in]   num_can_ids     Number of CAN IDs in array
- * @param[in]   app_mem_pool    Application memory pool
+ * @param[in]   canl_h              CANL handle
+ * @param[in]   rtcan_h             RTCAN handle to listen to
+ * @param[in]   bus_name            Name of CAN bus
+ * @param[in]   can_ids             Array of CAN IDs to listen to
+ * @param[in]   num_can_ids         Number of CAN IDs in array
+ * @param[in]   app_mem_pool        Application memory pool
+ * @param[in]   printf_mutex_ptr    Mutex for printf() access
  */
 void canl_init(canl_handle_t* canl_h, 
                rtcan_handle_t* rtcan_h,
                const char* bus_name,
                const uint32_t* can_ids,
                const uint32_t num_can_ids,
-               TX_BYTE_POOL* app_mem_pool)
+               TX_BYTE_POOL* app_mem_pool,
+               TX_MUTEX* printf_mutex_ptr)
 {
     canl_h->rtcan_h = rtcan_h;
     canl_h->bus_name = bus_name;
+    canl_h->printf_mutex_ptr = printf_mutex_ptr;
 
     // setup receive queue and RTCAN subscriptions
     UINT tx_status = tx_queue_create(&canl_h->can_rx_queue,
@@ -115,22 +118,27 @@ static void canl_thread_entry(ULONG input)
  */
 static void print_msg(canl_handle_t* canl_h, rtcan_msg_t* msg_ptr)
 {
-    (void) canl_h; // TODO: print bus name
+    UINT tx_status = tx_mutex_get(canl_h->printf_mutex_ptr, TX_WAIT_FOREVER);
 
-    if (canl_h->bus_name != NULL)
+    if (tx_status == TX_SUCCESS)
     {
-        printf("Bus:     %s\r\n", canl_h->bus_name);
+        if (canl_h->bus_name != NULL)
+        {
+            printf("Bus:     %s\r\n", canl_h->bus_name);
+        }
+
+        printf("Tick:    %lu\r\n", tx_time_get());
+        printf("ID:      0x%lx\r\n", msg_ptr->identifier);
+        printf("Length:  %lu\r\n", msg_ptr->length);
+        printf("Data:    0x");
+
+        for (uint32_t i = 0; i < msg_ptr->length; i++)
+        {
+            printf("%02x", msg_ptr->data[i]);
+        }
+
+        printf("\r\n\n");
+
+        tx_mutex_put(canl_h->printf_mutex_ptr);
     }
-
-    printf("Tick:    %lu\r\n", tx_time_get());
-    printf("ID:      0x%lx\r\n", msg_ptr->identifier);
-    printf("Length:  %lu\r\n", msg_ptr->length);
-    printf("Data:    0x");
-
-    for (uint32_t i = 0; i < msg_ptr->length; i++)
-    {
-        printf("%02x", msg_ptr->data[i]);
-    }
-
-    printf("\r\n\n");
 }

@@ -40,6 +40,11 @@ void test_rig_init(test_rig_context_t* test_rig_ptr,
                app_mem_pool);
 #endif
 
+    // setup printf mutex
+    tx_mutex_create(&test_rig_ptr->printf_mutex,
+                    "printf() mutex",
+                    TX_INHERIT);
+
 #if CONFIG_ENABLE_CAN_LISTENER
 #if CONFIG_LISTEN_TO_CAN1
     {
@@ -51,7 +56,8 @@ void test_rig_init(test_rig_context_t* test_rig_ptr,
                 CONFIG_CAN1_NAME,
                 listen_ids,
                 num_listen_ids,
-                app_mem_pool);
+                app_mem_pool,
+                &test_rig_ptr->printf_mutex);
     }
 #endif
 #if CONFIG_LISTEN_TO_CAN2
@@ -64,7 +70,8 @@ void test_rig_init(test_rig_context_t* test_rig_ptr,
                 CONFIG_CAN2_NAME,
                 listen_ids,
                 num_listen_ids,
-                app_mem_pool);
+                app_mem_pool,
+                &test_rig_ptr->printf_mutex);
     }
 #endif
 #if CONFIG_LISTEN_TO_CAN3
@@ -77,7 +84,8 @@ void test_rig_init(test_rig_context_t* test_rig_ptr,
                 CONFIG_CAN3_NAME,
                 listen_ids,
                 num_listen_ids,
-                app_mem_pool);
+                app_mem_pool,
+                &test_rig_ptr->printf_mutex);
     }
 #endif
 #endif

@@ -38,6 +38,9 @@ typedef struct {
 #endif
 
 #if CONFIG_ENABLE_CAN_LISTENER
+
+    TX_MUTEX printf_mutex;
+
 #if CONFIG_LISTEN_TO_CAN1
     canl_handle_t canl1;
 #endif
