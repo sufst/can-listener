@@ -152,5 +152,7 @@ src/Drivers/CMSIS/Device/*
 
 src/Drivers/CMSIS/Include/*
 !src/Drivers/CMSIS/Include/core_cm7.h
+!src/Drivers/CMSIS/Include/cmsis_version.h
+!src/Drivers/CMSIS/Include/cmsis_gcc.h
 
 !src/Drivers/CMSIS/LICENSE.txt
