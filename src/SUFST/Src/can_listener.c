@@ -23,17 +23,20 @@ static void print_msg(canl_handle_t* canl_h, rtcan_msg_t* msg_ptr);
  * 
  * @param[in]   canl_h          CANL handle
  * @param[in]   rtcan_h         RTCAN handle to listen to
+ * @param[in]   bus_name        Name of CAN bus
  * @param[in]   can_ids         Array of CAN IDs to listen to
  * @param[in]   num_can_ids     Number of CAN IDs in array
  * @param[in]   app_mem_pool    Application memory pool
  */
 void canl_init(canl_handle_t* canl_h, 
                rtcan_handle_t* rtcan_h,
+               const char* bus_name,
                const uint32_t* can_ids,
                const uint32_t num_can_ids,
                TX_BYTE_POOL* app_mem_pool)
 {
     canl_h->rtcan_h = rtcan_h;
+    canl_h->bus_name = bus_name;
 
     // setup receive queue and RTCAN subscriptions
     UINT tx_status = tx_queue_create(&canl_h->can_rx_queue,
@@ -113,6 +116,11 @@ static void canl_thread_entry(ULONG input)
 static void print_msg(canl_handle_t* canl_h, rtcan_msg_t* msg_ptr)
 {
     (void) canl_h; // TODO: print bus name
+
+    if (canl_h->bus_name != NULL)
+    {
+        printf("Bus:     %s\r\n", canl_h->bus_name);
+    }
 
     printf("Tick:    %lu\r\n", tx_time_get());
     printf("ID:      0x%lx\r\n", msg_ptr->identifier);
