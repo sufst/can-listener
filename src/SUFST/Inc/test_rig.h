@@ -18,7 +18,6 @@
 
 #define RTCAN1  (CONFIG_LISTEN_TO_CAN1)
 #define RTCAN2  (CONFIG_LISTEN_TO_CAN2)
-#define RTCAN3  (CONFIG_LISTEN_TO_CAN3)
 
 /**
  * @brief   Test rig state
@@ -33,10 +32,6 @@ typedef struct {
     rtcan_handle_t rtcan2;
 #endif
 
-#if RTCAN3
-    rtcan_handle_t rtcan3;
-#endif
-
 #if CONFIG_ENABLE_CAN_LISTENER
 
     TX_MUTEX printf_mutex;
@@ -45,10 +40,7 @@ typedef struct {
     canl_handle_t canl1;
 #endif
 #if CONFIG_LISTEN_TO_CAN2
-    canl_handle_t canl1;
-#endif
-#if CONFIG_LISTEN_TO_CAN3
-    canl_handle_t canl1;
+    canl_handle_t canl2;
 #endif
 #endif
 
@@ -60,7 +52,6 @@ typedef struct {
 void test_rig_init(test_rig_context_t* test_rig_ptr,
                    CAN_HandleTypeDef* can1_h,
                    CAN_HandleTypeDef* can2_h,
-                   CAN_HandleTypeDef* can3_h,
                    TX_BYTE_POOL* app_mem_pool);
 
 void test_rig_handle_can_tx_mailbox_callback(test_rig_context_t* test_rig_ptr,
