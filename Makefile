@@ -279,6 +279,7 @@ src/Middlewares/ST/threadx/common/src/txe_timer_create.c \
 src/Middlewares/ST/threadx/common/src/txe_timer_deactivate.c \
 src/Middlewares/ST/threadx/common/src/txe_timer_delete.c \
 src/Middlewares/ST/threadx/common/src/txe_timer_info_get.c \
+src/Middlewares/SUFST/rtcan/src/rtcan.c
 
 ASM_SOURCES =  \
 src/startup_stm32f746xx.s \
@@ -304,7 +305,8 @@ C_INCLUDES =  \
 -Isrc/Drivers/CMSIS/Include \
 -Isrc/AZURE_RTOS/App \
 -Isrc/Middlewares/ST/threadx/common/inc/ \
--Isrc/Middlewares/ST/threadx/ports/cortex_m7/gnu/inc/
+-Isrc/Middlewares/ST/threadx/ports/cortex_m7/gnu/inc/ \
+-Isrc/Middlewares/SUFST/rtcan/inc
 
 ASM_INCLUDES = 
 
