@@ -8,13 +8,14 @@
 #define _CAN_LISTENER_H
 
 #include "can.h"
+#include "tx_api.h"
 #include <stdbool.h>
 #include <stdint.h>
 
-//==============================================================================
+#include "config.h"
+#include "rtcan.h"
 
-#define CANL_ERROR_NONE 0x00000000U // no error
-#define CANL_ERROR_HAL  0x00000001U // HAL error
+#define CANL_RX_QUEUE_LENGTH    20
 
 //==============================================================================
 
@@ -24,30 +25,33 @@
 typedef struct {
     
     /**
-     * @brief   CAN handle to listen to
+     * @brief   Thread
      */
-    CAN_HandleTypeDef* can_h;
-    
-    /**
-     * @brief   Memory for received message
-     */
-    struct {
-        CAN_RxHeaderTypeDef header;
-        uint8_t data[8];
-    } rx_message;
+    TX_THREAD thread;
 
     /**
-     * @brief   Error code
+     * @brief   RTCAN handle
      */
-    uint32_t err;
+    rtcan_handle_t* rtcan_h;
+
+    /**
+     * @brief   RTCAN message queue
+     */
+    TX_QUEUE can_rx_queue;
+
+    /**
+     * @brief   RTCAN message queue memory
+     */
+    rtcan_msg_t* can_rx_queue_mem[CANL_RX_QUEUE_LENGTH];
 
 } canl_handle_t;
 
 //==============================================================================
 
-void canl_init(canl_handle_t* canl_h, CAN_HandleTypeDef* can_h);
-void canl_tick(canl_handle_t* canl_h);
-void canl_rx_it_handler(canl_handle_t* canl_h, uint32_t rx_fifo);
-
+void canl_init(canl_handle_t* canl_h,
+               rtcan_handle_t* rtcan_h,
+               const uint32_t* can_ids,
+               const uint32_t num_can_ids,
+               TX_BYTE_POOL* app_mem_pool);
 
 #endif

@@ -9,113 +9,120 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#define CANL_THREAD_STACK_SIZE  512
+
 #define ADD_ERROR_IF(cond, err, inst) if(cond) { add_error(inst, err); }
 
-/*
- * internal functions
- */
-static bool no_errors(canl_handle_t* canl_h);
-static void add_error(canl_handle_t* canl_h, uint32_t err);
+static void canl_thread_entry(ULONG input);
+static void print_msg(canl_handle_t* canl_h, rtcan_msg_t* msg_ptr);
 
 //==============================================================================
 
 /**
  * @brief       Initialises CANL instance
  * 
- * @param[in]   canl_h  CANL handle
- * @param[in]   can_h   CAN handle to listen to
+ * @param[in]   canl_h          CANL handle
+ * @param[in]   rtcan_h         RTCAN handle to listen to
+ * @param[in]   can_ids         Array of CAN IDs to listen to
+ * @param[in]   num_can_ids     Number of CAN IDs in array
+ * @param[in]   app_mem_pool    Application memory pool
  */
-void canl_init(canl_handle_t* canl_h, CAN_HandleTypeDef* can_h)
+void canl_init(canl_handle_t* canl_h, 
+               rtcan_handle_t* rtcan_h,
+               const uint32_t* can_ids,
+               const uint32_t num_can_ids,
+               TX_BYTE_POOL* app_mem_pool)
 {
-    canl_h->can_h = can_h;
+    canl_h->rtcan_h = rtcan_h;
 
-    HAL_StatusTypeDef status = HAL_CAN_Start(canl_h->can_h);
-    ADD_ERROR_IF(status != HAL_OK, CANL_ERROR_HAL, canl_h);
+    // setup receive queue and RTCAN subscriptions
+    UINT tx_status = tx_queue_create(&canl_h->can_rx_queue,
+                                     "CAN Listener Rx Queue",
+                                     TX_1_ULONG,
+                                     &canl_h->can_rx_queue_mem,
+                                     CANL_RX_QUEUE_LENGTH * sizeof(rtcan_msg_t));
 
-    if (no_errors(canl_h))
+    if (tx_status == TX_SUCCESS)
     {
-        const uint32_t notifs = CAN_IT_RX_FIFO0_MSG_PENDING
-                                | CAN_IT_RX_FIFO1_MSG_PENDING;
-        status = HAL_CAN_ActivateNotification(canl_h->can_h, notifs);
-        ADD_ERROR_IF(status != HAL_OK, CANL_ERROR_HAL, canl_h);
-    }
-}
-
-/**
- * @brief       Receive interrupt handler
- * 
- * @details     This needs to be called in:
- *              - HAL_CAN_RxFifo0MsgPendingCallback
- *              - HAL_CAN_RxFifo1MsgPendingCallback
- * 
- *              ... only if the callback is passed the same CAN handle as that
- *              of the CANL instance
- * 
- * @param[in]   canl_h      CANL handle
- * @param[in]   rx_fifo     Receive fifo number
- */
-void canl_rx_it_handler(canl_handle_t* canl_h, uint32_t rx_fifo)
-{
-    // get any pending messages and print them
-    if (no_errors(canl_h))
-    {
-        for (uint32_t fifo = 0; fifo < 2; fifo++)
+        for (uint32_t i = 0; i < num_can_ids; i++)
         {
-            while(HAL_CAN_GetRxFifoFillLevel(canl_h->can_h, fifo) > 0)
-            {
-                HAL_StatusTypeDef status;
-                status = HAL_CAN_GetRxMessage(canl_h->can_h, 
-                                              fifo,
-                                              &canl_h->rx_message.header,
-                                              canl_h->rx_message.data);
-
-                ADD_ERROR_IF(status != HAL_OK, CANL_ERROR_HAL, canl_h);
-
-                if (no_errors(canl_h))
-                {
-                    printf("Tick:    %lu\r\n", HAL_GetTick());
-                    printf("ID:      0x%lx\r\n", canl_h->rx_message.header.StdId);
-                    printf("Length:  %lu\r\n", canl_h->rx_message.header.DLC);
-                    printf("Data:    0x");
-                    
-                    for (uint32_t i = 0; i < canl_h->rx_message.header.DLC; i++)
-                    {
-                        printf("%02x", canl_h->rx_message.data[i]);
-                    }
-
-                    printf("\r\n\n");
-                }
-            }
+            rtcan_subscribe(canl_h->rtcan_h, can_ids[i], &canl_h->can_rx_queue);
         }
     }
 
-    // notify user of error and stop
-    if (!no_errors(canl_h))
+    // create and launch thread
+    void* stack_ptr = NULL;
+
+    if (tx_status == TX_SUCCESS)
     {
-        printf("Error (%08lx)\r\nStopping.\r\n", canl_h->err);
-        while(1);
+        tx_status = tx_byte_allocate(app_mem_pool,
+                                     (void**) &stack_ptr,
+                                     CANL_THREAD_STACK_SIZE,
+                                     TX_NO_WAIT);
     }
+
+    if (tx_status == TX_SUCCESS)
+    {
+        tx_status = tx_thread_create(&canl_h->thread,
+                                     "CAN Listener Thread",
+                                     canl_thread_entry,
+                                     (ULONG) canl_h,
+                                     stack_ptr,
+                                     CANL_THREAD_STACK_SIZE,
+                                     CONFIG_CANL_PRIORITY,
+                                     CONFIG_CANL_PRIORITY,
+                                     TX_NO_TIME_SLICE,
+                                     TX_AUTO_START);
+    }
+
 }
 
 //==============================================================================
 
 /**
- * @brief       Returns true if there have been no errors
+ * @brief       CAN listener thread entry
  * 
- * @param[in]   canl_h  CANL handle
+ * @param[in]   input   CANL handle
  */
-static bool no_errors(canl_handle_t* canl_h)
+static void canl_thread_entry(ULONG input)
 {
-    return (canl_h->err == CANL_ERROR_NONE);
+    canl_handle_t* canl_h = (canl_handle_t*) input;
+
+    while (1)
+    {
+        rtcan_msg_t* msg_ptr;
+
+        UINT tx_status = tx_queue_receive(&canl_h->can_rx_queue, 
+                                          (void*) &msg_ptr,
+                                          TX_WAIT_FOREVER);
+
+        if (tx_status == TX_SUCCESS)
+        {
+            print_msg(canl_h, msg_ptr);
+            rtcan_msg_consumed(canl_h->rtcan_h, msg_ptr);
+        }
+    }
 }
 
 /**
- * @brief       Adds an error
+ * @brief       Print received message
  * 
- * @param[in]   canl_h  CANL handle
- * @param[in]   err     Error to add
+ * @param[in]   canl_h      CANL handle
+ * @param[in]   msg_ptr     Pointer to received message
  */
-static void add_error(canl_handle_t* canl_h, uint32_t err)
+static void print_msg(canl_handle_t* canl_h, rtcan_msg_t* msg_ptr)
 {
-    canl_h->err |= err;
+    (void) canl_h; // TODO: print bus name
+
+    printf("Tick:    %lu\r\n", HAL_GetTick());
+    printf("ID:      0x%lx\r\n", msg_ptr->identifier);
+    printf("Length:  %lu\r\n", msg_ptr->length);
+    printf("Data:    0x");
+
+    for (uint32_t i = 0; i < msg_ptr->length; i++)
+    {
+        printf("%02x", msg_ptr->data[i]);
+    }
+
+    printf("\r\n\n");
 }

@@ -47,7 +47,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static canl_handle_t can_listener;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -170,32 +169,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-/**
- * @brief       CAN recieve message pending callback (fifo 0)
- * 
- * @param[in]   can_h   CAN handle
- */
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* can_h)
-{
-    if (can_h == can_listener.can_h)
-    {
-        canl_rx_it_handler(&can_listener, 0);
-    }
-}
-
-/**
- * @brief       CAN recieve message pending callback (fifo 1)
- * 
- * @param[in]   can_h   CAN handle
- */
-void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef* can_h)
-{
-    if (can_h == can_listener.can_h)
-    {
-        canl_rx_it_handler(&can_listener, 0);
-    }
-}
 
 /* USER CODE END 4 */
 
