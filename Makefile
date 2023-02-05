@@ -14,7 +14,7 @@
 # configuration
 ###############################################################################
 
-TARGET = can-listener
+TARGET = can-test-rig
 BUILD_DIR = build
 DEBUG = 1
 C_STANDARD = c11

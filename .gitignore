@@ -14,6 +14,7 @@
 ################################################################################
 
 /build
+src/Makefile
 
 # build artefacts
 *.d
@@ -133,10 +134,23 @@ $RECYCLE.BIN/
 ################################################################################
 
 # unnecessary embedded middleware and driver files
-src/Drivers/CMSIS/*
-!src/Drivers/CMSIS/LICENSE.txt
+src/Drivers/CMSIS/Core
+src/Drivers/CMSIS/Core_A
+src/Drivers/CMSIS/docs
+src/Drivers/CMSIS/Description
+src/Drivers/CMSIS/Lib
+src/Drivers/CMSIS/NN
+src/Drivers/CMSIS/RTOS
+src/Drivers/CMSIS/RTOS2
+src/Drivers/CMSIS/DSP
+
+src/Drivers/CMSIS/Device/*
 !src/Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f7xx.h
 !src/Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f746xx.h
 !src/Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h
 !src/Drivers/CMSIS/Device/ST/STM32F7xx/LICENSE.txt
+
+src/Drivers/CMSIS/Include/*
 !src/Drivers/CMSIS/Include/core_cm7.h
+
+!src/Drivers/CMSIS/LICENSE.txt
